@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		 Multi cat clicker
+	</title>
+	<script type="text/javascript" src="cat-clicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="cat-clicker.css">
+</head>
+<body>
+	<div class="container" id="page">
+		<div class="image-container" id="image-container">
+			<img src="" id="display-image">
+			<p id="display-count"></p>
+		</div>
+		<div class="list-container">
+			<ul id="cat-names">
+				<li>
+					<a href="#" onclick="javascript:viewCat.showCat(1)">Cat 1</a>
+				</li>
+				<li>
+					<a href="#" onclick="javascript:viewCat.showCat(2)">Cat 2</a>
+				</li>
+				<li>
+					<a href="#" onclick="javascript:viewCat.showCat(3)">Cat 3</a>
+				</li>
+				<li>
+					<a href="#" onclick="javascript:viewCat.showCat(4)">Cat 4</a>
+				</li>
+				<li>
+					<a href="#" onclick="javascript:viewCat.showCat(5)">Cat 5</a>
+				</li>
+			</ul>
+		</div>
+		<div id="admin">
+			<button type="button" onclick="javascript:viewCat.showAdmin()">Admin</button>
+			<form id="adminForm" style="visibility: hidden;">
+				Cat Name:<br>
+				<input type="text" name="catName" value="" id="formCatName">
+				<br>
+				Counter:<br>
+				<input type="text" name="counter" value="" id="formCatCounter">
+				<br>
+				<button type="button" onclick="javascript:viewCat.hideAdmin()">Cancel</button>
+				<button type="button" onclick="javascript:interface.updateCurrentCat()">Save</button>
+				<!-- <input type="submit" value="Cancel" onclick="javascript:viewCat.hideAdmin()">
+				<input type="submit" value="Save" onclick="javascript:interface.updateCurrentCat()"> -->
+			</form>
+		</div>
+	</div>
+</body>
+</html>
