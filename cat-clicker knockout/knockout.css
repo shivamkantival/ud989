@@ -1,0 +1,27 @@
+* {
+	margin: 0px;
+	box-sizing: border-box;
+}
+
+.container {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.image-container {
+	max-width: 75%;
+	min-width: 75%;
+	min-height: 600px;
+	order: 1;
+}
+
+.list-container {
+	width: 25%;
+	flex-shrink: 0;
+	order: 2;
+}
+
+#admin {
+	width: 100%;
+	order: 3;
+}

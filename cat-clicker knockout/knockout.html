@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		 Multi cat clicker
+	</title>
+	<link rel="stylesheet" type="text/css" href="knockout.css">
+</head>
+<body>
+	<div class="container" id="page">
+		<div class="image-container" id="image-container">
+			<img data-bind="attr: {src: currentCat().src}, click: incCounter">
+			<p data-bind="text: currentCat().name"></p>
+			<p data-bind="text: currentCat().counter"></p>
+		</div>
+		<div class="list-container">
+			<ul data-bind="foreach: cats">
+				<li>
+					<a href="#" data-bind="text: name, click: $parent.showCat"></a>
+				</li>
+			</ul>
+		</div>
+		<div id="admin">
+			<button type="button" data-bind="click: alterHideAdmin">Admin</button>
+			<form data-bind="visible: hideAdmin, submit:saveAdmin">
+				Cat Name:<br>
+				<input type="text" data-bind="textInput: tempCatName">
+				<br>
+				Counter:<br>
+				<input type="text" data-bind="textInput: tempCounter">
+				<br>
+				<button type="button" data-bind="click: resetAdmin">Cancel</button>
+				<button type="submit">Save</button>
+			</form>
+		</div>
+	</div>
+	<script type='text/javascript' src='lib/knockout.js'></script>
+	<script type="text/javascript" src="knockout.js"></script>
+</body>
+</html>
