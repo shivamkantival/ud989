@@ -9,8 +9,6 @@ var cat = function(name) {
 
 var myView = function() {
 	var self = this;
-	self.tempCatName = ko.observable("");
-	self.tempCounter = ko.observable(0);
 	self.cats = ko.observableArray([]);
 
 	self.cats.push(new cat("cat1"));
@@ -19,6 +17,8 @@ var myView = function() {
 	self.cats.push(new cat("cat4"));
 
 	self.currentCat = ko.observable(self.cats()[0]);
+	self.tempCatName = ko.observable("");
+	self.tempCounter = ko.observable(0);
 
 	self.showCat = function(clickedCat) {
 		self.currentCat(clickedCat);
@@ -49,11 +49,11 @@ var myView = function() {
 	}
 
 	self.saveAdmin = function(obj) {
-		console.log(obj);
 		self.currentCat().name(self.tempCatName());
-		self.currentCat().counter(self.tempCounter());
+		self.currentCat().counter(parseInt(self.tempCounter()));
 		self.resetAdmin();
 	}
+	self.resetAdmin();
 }
 
 ko.applyBindings(new myView());
