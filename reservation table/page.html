@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<head>
+	<title>Reservation page</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+	<link rel="stylesheet" type="text/css" href="page.css">
+</head>
+
+<body>
+	<div id="table-container" class="container">
+		<table id="reservation-table">
+			<tr>
+				<th rowspan="2">
+					Services<br>
+					Room type
+				</th>
+				<th rowspan="2" colspan="2">
+					Standard service
+				</th>
+				<th rowspan="2" colspan="2">
+					Deluxe Service
+				</th>
+				<th rowspan="2" colspan="1">
+					total
+				</th>
+			</tr>
+		</table>
+		<button type="button" onclick="javascript:calcCharges()" style="display: block;">Update</button>
+	</div>
+	<script type="text/javascript" src="page.js"></script>
+</body>
