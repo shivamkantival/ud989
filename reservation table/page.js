@@ -1,3 +1,5 @@
+// model
+
 var room = function(data) {
 	var temp = [];
 	data.forEach(function(value, iter, array) {
@@ -21,6 +23,8 @@ var roomList = (function() {
 
 
 
+// view
+
 var renderTable = function() {
 	var tempIter;
 	var elem;
@@ -43,29 +47,38 @@ var renderTable = function() {
 
 renderTable();
 
+var updateTable = (rowTotals, totalCost) => {
+	let temp;
+	rowTotals.forEach((sum, iteration) => {
+		temp = document.getElementById(`${iteration}total`);
+		temp.innerHTML = "" + rowTotal;
+	});
+	temp = document.getElementById(`grand-total`);
+	temp.innerHTML = totalCost;
+}
 
+// octopus
 var calcCharges = function() {
 	var cols = roomList.numOfCols;
 	var rows = roomList.numOfRows;
 	var temp;
-	var rowTotal;
+	var rowTotal = [];
+	var tempRowTotal;
 	var totalCost = 0;
 	console.log("hello");
 	for(var rowIter = 0;rowIter<rows;rowIter++){
-		rowTotal = 0;
+		temRowTotal = 0;
 		for(var colIter = 1;colIter<=cols;colIter++){
 			temp = document.getElementById(`${rowIter}col${colIter}`).value;
 			if(temp === ""){
 				temp+=0;
 			}
 			else {
-				rowTotal+= roomList.data[rowIter][colIter].cost*parseInt(temp);
+				tempRowTotal+= roomList.data[rowIter][colIter].cost*parseInt(temp);
 			}
 		}
-		temp = document.getElementById(`${rowIter}total`);
-		temp.innerHTML = ""+rowTotal;
-		totalCost += rowTotal;
+		rowTotal.push(tempRowTotal);
+		totalCost += tempRowTotal;
 	}
-	temp = document.getElementById(`grand-total`);
-	temp.innerHTML = totalCost;
+	updateTable(rowTotal, totalCost);
 }
