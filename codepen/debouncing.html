@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Debounce</title>
+</head>
+<body>
+	<input type="number" oninput="javascript:debounce(myFunc, 2000)" value='0'">
+	<script type="text/javascript">
+		const debounce = (() => {
+		    let blockCall = false;
+		    let counter = 0;
+		    let timeoutEvent = null;
+		    let latestTimeoutTime = null;
+		    return (callBack, timeout, args = []) => {
+		        timeout = timeout || 1000;
+		        counter++;
+		        if(!blockCall) {
+		            blockCall = true;
+		            latestTimeoutTime = timeout;
+		        }
+		        else{
+		        	clearTimeout(timeoutEvent);
+		        }
+	            timeoutEvent = setTimeout(function() {
+	                blockCall = false;
+	                callBack(args);
+	                console.log(`called debounce event ${counter}`);
+	            }, timeout);
+		    }
+		})();
+
+		const myFunc = () => console.log("hello");
+	</script>
+</body>
+</html>

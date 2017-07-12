@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>throttle</title>
+</head>
+<body>
+	<input type="number" oninput="javascript:throttle(myFunc, 2000)" value='0'">
+	<script type="text/javascript">
+		const throttle = (() => {
+		    let blockCall = false;
+		    let counter = 0;
+		    let timeoutEvent = null;
+		    return (callBack, timeout, args = []) => {
+		        timeout = timeout || 1000;
+		        counter++;
+		        if(!blockCall) {
+		            blockCall = true;
+		            timeoutEvent = setTimeout(function() {
+		                blockCall = false;
+		                console.log("hello");
+		                callBack(args);
+		                console.log(`called throttle event ${counter}`);
+		            }, timeout);
+		        }
+		    }
+		})();
+
+		const myFunc = () => console.log("hello");
+	</script>
+</body>
+</html>
