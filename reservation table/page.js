@@ -1,84 +1,139 @@
 // model
+let model;
+const modelInit = function(){
+	const room = (data) => {
+		var temp = [];
+		data.forEach(function(value, iter, array) {
+			temp.push(value);
+		});
+		return temp;
+	};
+	let roomList = (() =>{
+		var temp = [];
+		temp.push(room([{"type":"Standard"}, {"cost":10,}, {"cost":15,}]));
+		temp.push(room([{"type":"Luxury"}, {"cost":20,}, {"cost":25,}]));
+		temp.push(room([{"type":"Supreme"}, {"cost":30,}, {"cost":35,}]));
+		temp.push(room([{"type":"Supreme deluxe"}, {"cost":40,}, {"cost":45,}]));
+		return {"data": temp,
+		};
+	})();
+	const LocalValueCopy = [[0,0,0],
+						[0,0,0],
+						[0,0,0],
+						[0,0,0]];
+	let grandTotal = 0;
 
-var room = function(data) {
-	var temp = [];
-	data.forEach(function(value, iter, array) {
-		temp.push(value);
-	});
-	return temp;
+	return {
+		"numOfRows": LocalValueCopy.length,
+		"numOfCols": LocalValueCopy[0].length -1,
+		"getLocalValueCopy": (rowNum) => {
+			return LocalValueCopy[rowNum];
+		},
+		"updateRow": (rowNum, rowData) => {
+			LocalValueCopy[rowNum] = rowData;
+		},
+		"getGlabalSum": (() => grandTotal),
+		"updateGrandTotal": (newValue) => {
+			grandTotal = newValue;
+		},
+		"getRoomList": (rowNum) => {
+			return roomList.data[rowNum];
+		}
+	}
 }
 
-var roomList = (function() {
-	var temp = [];
-	temp.push(room([{"type":"Standard"}, {"cost":10,}, {"cost":15,}]));
-	temp.push(room([{"type":"Luxury"}, {"cost":20,}, {"cost":25,}]));
-	temp.push(room([{"type":"Supreme"}, {"cost":30,}, {"cost":35,}]));
-	temp.push(room([{"type":"Supreme deluxe"}, {"cost":40,}, {"cost":45,}]));
-	return {"data": temp,
-			"numOfRows": temp.length,
-			"numOfCols": 2
-	};
-})();
-
-
+// interface
+const interface = {
+	"that": this,
+	"getTotalRows": ()=> model.numOfRows,
+	"getTotalCols": ()=> model.numOfCols,
+	"getRowValues": (rowNum)=>model.getLocalValueCopy(rowNum),
+	"getRowCosts": (rowNum) => model.getRoomList(rowNum),
+	"getGrandSum": ()=> {return model.getGlabalSum()},
+	"debounce":(() => {
+	    let blockCall = false;
+	    let timeoutEvent = null;
+	    let latestTimeoutTime = null;
+	    return (timeout, args = []) => {
+	        timeout = timeout || 1000;
+	        if(!blockCall) {
+	            blockCall = true;
+	            latestTimeoutTime = timeout;
+	        }
+	        else{
+	        	clearTimeout(timeoutEvent);
+	        }
+	        timeoutEvent = setTimeout(function() {
+	            blockCall = false;
+	            interface.updateRowData(args);
+	        }, timeout);
+	    }
+	})(),
+	"updateRowData": (args)=> {
+		const totalRows = model.numOfRows;
+		const totalCols = model.numOfCols;
+		const rowNum = args[0];
+		const colNum = args[1];
+		const newValue = view.getnewValue(rowNum, colNum);
+		const oldRowValue = model.getLocalValueCopy(rowNum);
+		const rowCosts = model.getRoomList(rowNum);
+		const newRoomCost = rowCosts[colNum].cost * newValue;
+		const aggregateRowCost = oldRowValue[totalCols] + (newRoomCost - oldRowValue[colNum-1]);
+		let newRowValue= oldRowValue.map(x=> x);
+		newRowValue[colNum-1] = newRoomCost;
+		newRowValue[totalCols] = aggregateRowCost;
+		model.updateRow(rowNum, newRowValue);
+		const newGrandTotal = model.getGlabalSum() + (newRoomCost - oldRowValue[colNum-1]);
+		model.updateGrandTotal(newGrandTotal);
+		view.updateRowTotal(rowNum, aggregateRowCost);
+		view.updateGrandTotal(newGrandTotal);
+	}
+}
 
 
 // view
-
-var renderTable = function() {
-	var tempIter;
-	var elem;
-	var table = document.getElementById("reservation-table");
-	for (tempIter = 0; tempIter< roomList.numOfRows;tempIter++){
-		elem= document.createElement('tr');
-		elem.innerHTML+= `<th> ${roomList.data[tempIter][0].type} </th>`;
-		for (var i = 1; i <= roomList.numOfCols;i++) {
-			elem.innerHTML += `<td><input type="text" id="${tempIter}col${i}"></td>`;
-			elem.innerHTML += `<td>${roomList.data[tempIter][i].cost}</td>`;
+const view = {
+	"renderTable": ()=> {
+		const totalRows = interface.getTotalRows();
+		const totalCols = interface.getTotalCols();
+		const table = document.getElementById("reservation-table");
+		let tempRowIter;
+		let tempColIter;
+		let temp;
+		let rowValues;
+		let rowCosts;
+		const grandSum = interface.getGrandSum();
+		for(tempRowIter=0;tempRowIter < totalRows;tempRowIter++) {
+			rowCosts = interface.getRowCosts(tempRowIter);
+			rowValues = interface.getRowValues(tempRowIter);
+			elem= document.createElement('tr');
+			elem.innerHTML+= `<th> ${rowCosts[0].type} </th>`;
+			for (tempColIter = 1; tempColIter <= totalCols;tempColIter++) {
+				elem.innerHTML += `<td><input type="number" min="0" id="${tempRowIter}col${tempColIter}" value="${rowValues[tempColIter-1]}" oninput="javascript:interface.debounce(400, [${tempRowIter}, ${tempColIter}])"></td>`;
+				elem.innerHTML += `<td>${rowCosts[tempColIter].cost}</td>`;
+			}
+			elem.innerHTML += `<td id="${tempRowIter}total">${rowValues[tempColIter-1]}</td>`
+			table.appendChild(elem)	;
 		}
-		elem.innerHTML += `<td id="${tempIter}total"> </td>`
-		table.appendChild(elem)	;
-	}
-	elem = document.createElement('tr');
-	elem.innerHTML += `<td colspan="4">Grand Total</td>`;
-	elem.innerHTML += `<td colspan="2" id="grand-total"></td>`;
-	table.appendChild(elem);
+		elem = document.createElement('tr');
+		elem.innerHTML += `<td colspan="4">Grand Total</td>`;
+		elem.innerHTML += `<td colspan="2" id="grand-total">${grandSum}</td>`;
+		table.appendChild(elem);
+	},
+	"getnewValue": (rowNum, colNum) => document.getElementById(`${rowNum}col${colNum}`).value,
+	"updateRowTotal":(rowNum, newValue)=>{
+		const elem = document.getElementById(`${rowNum}total`);
+		elem.innerHTML = newValue + "";
+	},
+	"updateGrandTotal": (newValue)=> {
+		const elem = document.getElementById('grand-total');
+		elem.innerHTML = newValue + "";
+	},
 }
 
-renderTable();
+// initialise
 
-var updateTable = (rowTotals, totalCost) => {
-	let temp;
-	rowTotals.forEach((sum, iteration) => {
-		temp = document.getElementById(`${iteration}total`);
-		temp.innerHTML = "" + rowTotal;
-	});
-	temp = document.getElementById(`grand-total`);
-	temp.innerHTML = totalCost;
-}
-
-// octopus
-var calcCharges = function() {
-	var cols = roomList.numOfCols;
-	var rows = roomList.numOfRows;
-	var temp;
-	var rowTotal = [];
-	var tempRowTotal;
-	var totalCost = 0;
-	console.log("hello");
-	for(var rowIter = 0;rowIter<rows;rowIter++){
-		temRowTotal = 0;
-		for(var colIter = 1;colIter<=cols;colIter++){
-			temp = document.getElementById(`${rowIter}col${colIter}`).value;
-			if(temp === ""){
-				temp+=0;
-			}
-			else {
-				tempRowTotal+= roomList.data[rowIter][colIter].cost*parseInt(temp);
-			}
-		}
-		rowTotal.push(tempRowTotal);
-		totalCost += tempRowTotal;
-	}
-	updateTable(rowTotal, totalCost);
+window.onload = function() {
+	model = modelInit();
+	view.renderTable();
 }
