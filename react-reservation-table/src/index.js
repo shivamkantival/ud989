@@ -35,7 +35,7 @@ class TableHead extends React.Component{
 
     renderCol(obj){
         return (<th colSpan={`1`} rowSpan={`2`} key={obj.name}>
-                    {obj.name}
+                    {`${obj.name}`}
                 </th>);
     }
 
@@ -82,7 +82,7 @@ class TableBody extends React.Component{
                 element = (
                     <td key={`row${index}`}>
                         <input type={`number`} min={`0`} onChange={this.handleChange} id={index} />
-                        { value }
+                        { `(${value}*)` }
                     </td>
                 )
             }
@@ -133,7 +133,7 @@ class Table extends React.Component {
 
     render() {
         return (
-            <table className={`container`} >
+            <table>
                  <TableHead headings={heading} />
                  <tbody>
                     {
@@ -144,13 +144,15 @@ class Table extends React.Component {
                     }
                  </tbody>
                  <TableFoot grandTotal={this.state.grandTotal} /> 
-            </table>)
+            </table>
+        )
     }
 }
 
 function App(props) {
-    return (<div>
+    return (<div id={`table-container`} >
                 <Table />
+                <span className={`label`} >* Cost Per Room</span>
            </div>);
 }
 

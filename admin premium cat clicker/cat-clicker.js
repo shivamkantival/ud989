@@ -17,7 +17,6 @@
 
 	function actualResizeHandler() {
 		var elem = document.getElementById("page").style.height = window.innerHeight;
-
 	}
 
 }());
