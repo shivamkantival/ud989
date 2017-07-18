@@ -96,8 +96,8 @@ function CatComponent(props) {
     return (
         <div id={`cat-display`}>
             <p>{catObj.catName}</p>
-            <img src={catObj.url} onClick={props.handleCatClick} />
-            <p id={`counter`} > {catObj.counter} </p>
+            <img src={catObj.url} onClick={props.handleCatClick} id={`image-elem`} />
+            <p id={`counter`} > {`Counter:  ${catObj.counter}`} </p>
             <AdminForm catObj={props.catObj} handleAdminSave={props.handleAdminSave} />
         </div>
     );
@@ -124,8 +124,8 @@ class ListComponent extends React.Component {
 
     render(){
         return (
-            <div>
-                <ul>
+            <div className={`names-list`} >
+                <ul >
                     {this.generateList()}
                 </ul>
             </div>
@@ -173,6 +173,10 @@ class App extends React.Component {
         const catNamesList = this.state.cats.map((catObj) => catObj.catName);
         return (
             <div className={`container`} id={`page`} >
+                <div className={`heading`} >
+                    <h1><u>Cat Clicker</u>
+                    </h1>
+                </div>
                 <CatComponent catObj={this.state.cats[this.state.currentCat]} handleAdminSave={this.handleAdminSave} handleCatClick={this.handleCatClick} />
                 <ListComponent catList={catNamesList} handleListClick={this.handleListClick} />  
             </div>

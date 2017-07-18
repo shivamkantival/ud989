@@ -1,10 +1,13 @@
 
 // model
 
-var data = function(){
+var data = function(catName, counter, url){
+	if(!counter) {
+		counter = 0;
+	}
 	return {
-		"catName" : "cat",
-		"counter": 0,
+		"catName" : catName || "cat",
+		"counter": counter,
 		"url": "cat.jpg"
 	}
 }
@@ -41,12 +44,15 @@ var viewCat = (function() {
 	return {
         renderList: function(catNamesList) {
 			var elem = document.getElementById("cat-names");
-			elem.innerHTML = "";
+			const ulElem = document.createElement("ul");
+			console.log(ulElem);
 			catNamesList.forEach(function(ob, catNum, cats) {
-				elem.innerHTML +=`<li>
+				ulElem.innerHTML +=`<li>
 						<a href="#" onclick="javascript:interface.handleListClick(${catNum})">${ob}</a>
 					</li>`
-			});//todo render optimized
+			}); //todo render optimized
+			elem.innerHTML="";
+			elem.appendChild(ulElem);
         },
 		renderCat: function(catObj) {
 			var elem = document.getElementById("image-container");
@@ -62,9 +68,8 @@ var viewCat = (function() {
 			elem.appendChild(catName);
 			elem.appendChild(imageElem);
 			elem.appendChild(textNode);
-            viewCat.hideAdmin(); //todo move to octopus
             //tod why not to extract again
-			handleCatClick.addEventListener("click", interface.handleCatClick); //todo how context comes into play here
+			imageElem.addEventListener("click", interface.handleCatClick); //todo how context comes into play here
 		},
 		hideAdmin: function(){
 			var elem = document.getElementById("adminForm");
@@ -105,23 +110,19 @@ var interfaceInit = function() {
         handleListClick: function(catNum) {
             currentCat = catNum;
             const catObj = model.getCat(catNum);
+			viewCat.hideAdmin();
             viewCat.renderCat(catObj);
         },
 		handleCatClick:function(catNum) {
             const counter = model.catclick(currentCat);
             viewCat.updateCounter(counter);
             viewCat.hideAdmin();
-            this.a = true;
+			// console.log(this);
 		},
 		saveAdminForm: function(catName, count) {
             //todo create cat function
             const presentUrl = model.getCat(currentCat).url;
-            const catObj = {
-                "catName": catName,
-                "counter":count,
-                "url": presentUrl,
-            };
-        
+			const catObj  = data(catName, count, presentUrl);
 			model.updateCat(currentCat, catObj);
             viewCat.renderCat(catObj);
             viewCat.renderList(model.getAllCatNames());
