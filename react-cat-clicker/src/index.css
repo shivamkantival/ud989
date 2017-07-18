@@ -1,0 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  /* border: 2px solid olive; */
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#page {
+  padding-top: 30px;
+  width: 80%;
+  justify-content: space-between;
+  background: hsla(31,15%,50%,.1);
+}
