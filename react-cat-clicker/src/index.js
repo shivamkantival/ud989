@@ -23,10 +23,11 @@ const catsData = function(totalCats){
 class AdminForm extends React.Component {
     constructor(props) {
         super(props);
+        let {catName,counter} = this.props.catObj;
         this.state = {
             showAdmin:"hidden",
-            inputName:this.props.catObj.catName,
-            inputCounter: this.props.catObj.counter,
+            inputName: catName,
+            inputCounter: counter,
         }
     }
 
@@ -92,45 +93,42 @@ class AdminForm extends React.Component {
 
 function CatComponent(props) {
     
-    const catObj = props.catObj;
+    // const {catName, counter, url} = props.catObj;
+    const {catObj:{catName, counter, url}, handleCatClick, handleAdminSave, catObj} = props;
+    console.log( catName, handleCatClick);
     return (
         <div id={`cat-display`}>
-            <p>{catObj.catName}</p>
-            <img src={catObj.url} onClick={props.handleCatClick} id={`image-elem`} />
-            <p id={`counter`} > {`Counter:  ${catObj.counter}`} </p>
-            <AdminForm catObj={props.catObj} handleAdminSave={props.handleAdminSave} />
+            <p>{catName}</p>
+            <img src={url} onClick={props.handleCatClick} id={`image-elem`} />
+            <p id={`counter`} > {`Counter:  ${counter}`} </p>
+            <AdminForm catObj={catObj} handleAdminSave={handleAdminSave} />
         </div>
     );
 }
 
-class ListComponent extends React.Component {
-    constructor(props){
-        super(props);
-    }
+function ListComponent(props) {
 
-    handleListClick = (element) =>{
+    const handleListClick = (element) =>{
         element.preventDefault();
         const catNum = parseInt(element.target.id, 10);
-        this.props.handleListClick(catNum);
+        props.handleListClick(catNum);
     }
 
-    generateList = ()=> {
-        return this.props.catList.map((catName, index)=>{
+    const generateList = () => {
+        return props.catList.map((catName, index)=>{
             return <li key={index} >
-                <a href={`#`} onClick={this.handleListClick} id={index} >{catName}</a>
+                <a href={`#`} onClick={handleListClick} id={index} >{catName}</a>
             </li>
         });
     }
 
-    render(){
-        return (
-            <div className={`names-list`} >
-                <ul >
-                    {this.generateList()}
-                </ul>
-            </div>
-        )
-    }
+    return (
+        <div className={`names-list`} >
+            <ul >
+                {generateList()}
+            </ul>
+        </div>
+    );
 }
 
 class App extends React.Component {
@@ -140,12 +138,12 @@ class App extends React.Component {
             "cats": catsData(4),
             "currentCat": 0,
         };
-        this.handleCatClick = this.handleCatClick.bind(this);
-        this.handleAdminSave = this.handleAdminSave.bind(this);
-        this.handleListClick = this.handleListClick.bind(this);
+        // this.handleCatClick = this.handleCatClick.bind(this);
+        // this.handleAdminSave = this.handleAdminSave.bind(this);
+        // this.handleListClick = this.handleListClick.bind(this);
     }
 
-    handleCatClick() {
+    handleCatClick = () => {
         const catList = this.state.cats;
         let counter = catList[this.state.currentCat].counter;
         counter++;
@@ -155,15 +153,18 @@ class App extends React.Component {
         })
     }
 
-    handleAdminSave(catObj) {
-        const catList = this.state.cats;
-        catList[this.state.currentCat] = catObj;
-        this.setState({
-            cats: catList,
-        })
+    handleAdminSave = (catObj)=> {
+        // const catList = this.state.cats;
+        // catList[this.state.currentCat] = catObj;
+        // this.setState({
+        //     cats: catList,
+        // })
+        const { cats, currentCat } = this.state;
+        cats[currentCat] = catObj;
+        this.setState({ cats });
     }
 
-    handleListClick(catNum) {
+    handleListClick = (catNum) => {
         this.setState({
             currentCat: catNum,
         });
@@ -172,7 +173,7 @@ class App extends React.Component {
     render() {
         const catNamesList = this.state.cats.map((catObj) => catObj.catName);
         return (
-            <div className={`container`} id={`page`} >
+            <div className='container' id={`page`} >
                 <div className={`heading`} >
                     <h1><u>Cat Clicker</u>
                     </h1>
