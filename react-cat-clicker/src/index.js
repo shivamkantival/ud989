@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-// import registerServiceWorker from './registerServiceWorker';
+import update from 'immutability-helper';
 
 const createCatObject = function(name = "cat", counter = 0) {
     const catObject = {
@@ -54,28 +54,27 @@ class AdminForm extends React.Component {
         })
     }
 
-    handleAdminSave = (element) => {
-        element.preventDefault();
+    handleAdminSave = (event) => {
+        event.preventDefault();
         const counter = parseInt(this.refs.catCounter.value, 10);
         const catName = this.refs.catName.value;
         const catObj = createCatObject(catName, counter);
         this.props.handleAdminSave(catObj);
     }
 
-    handleNameChange = (element)=> {
+    handleNameChange = (event)=> {
         this.setState({
-            inputName: element.target.value,
+            inputName: event.target.value,
         })
     }
 
-    handleCounterChange = (element) => {
+    handleCounterChange = (event) => {
         this.setState({
-            inputCounter: element.target.value,
+            inputCounter: event.target.value,
         })
     }
 
     render() {
-        const catObj = this.props.catObj;
         return (
             <div>
                 <button type="button" onClick={this.toggleAdmin} > Admin </button>
@@ -94,8 +93,7 @@ class AdminForm extends React.Component {
 function CatComponent(props) {
     
     // const {catName, counter, url} = props.catObj;
-    const {catObj:{catName, counter, url}, handleCatClick, handleAdminSave, catObj} = props;
-    console.log( catName, handleCatClick);
+    const {catObj:{catName, counter, url}, handleAdminSave, catObj} = props;
     return (
         <div id={`cat-display`}>
             <p>{catName}</p>
@@ -108,9 +106,9 @@ function CatComponent(props) {
 
 function ListComponent(props) {
 
-    const handleListClick = (element) =>{
-        element.preventDefault();
-        const catNum = parseInt(element.target.id, 10);
+    const handleListClick = (event) =>{
+        event.preventDefault();
+        const catNum = parseInt(event.target.id, 10);
         props.handleListClick(catNum);
     }
 
@@ -144,24 +142,28 @@ class App extends React.Component {
     }
 
     handleCatClick = () => {
-        const catList = this.state.cats;
-        let counter = catList[this.state.currentCat].counter;
-        counter++;
-        catList[this.state.currentCat].counter = counter;
+        const {cats, currentCat} = this.state;
+        let counter = ++cats[currentCat].counter;
+        const newcats = update(cats, {
+            [currentCat]: {
+                counter: {
+                    $set: counter
+                }
+            }
+        });
         this.setState({
-            cats: catList,
+            cats: newcats,
         })
     }
 
     handleAdminSave = (catObj)=> {
-        // const catList = this.state.cats;
-        // catList[this.state.currentCat] = catObj;
-        // this.setState({
-        //     cats: catList,
-        // })
-        const { cats, currentCat } = this.state;
-        cats[currentCat] = catObj;
-        this.setState({ cats });
+        const {cats, currentCat}  = this.state;
+        const newcats = update(cats, {
+            [currentCat]: {
+                $set: catObj
+            }
+        });
+        this.setState({cats:newcats});
     }
 
     handleListClick = (catNum) => {
